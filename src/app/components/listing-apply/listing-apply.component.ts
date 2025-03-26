@@ -2,13 +2,14 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HousingService } from '../../services/housing.service';
 import { HousingApplicationForm } from '../details/housing-application-form.type';
+import { EmojifyOnHoverDirective } from '../../directives/emojify-on-hover.directive';
 
 @Component({
   selector: 'app-listing-apply',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, EmojifyOnHoverDirective],
   template: `
     <h2 class="section-heading">
-      <span>Apply now to live here</span>
+      <span [appEmojifyOnHover]="'🤩'">Apply now to live here</span>
     </h2>
     <form [formGroup]="applyForm" (submit)="submitApplication()">
       <label for="first-name">First Name</label>
