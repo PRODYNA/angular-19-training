@@ -24,6 +24,4 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   `,
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'homes';
-}
+export class AppComponent {}

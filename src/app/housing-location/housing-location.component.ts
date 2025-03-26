@@ -24,5 +24,5 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./housing-location.component.scss'],
 })
 export class HousingLocationComponent {
-  @Input() housingLocation!: HousingLocation;
+  @Input({ required: true }) housingLocation!: HousingLocation;
 }
