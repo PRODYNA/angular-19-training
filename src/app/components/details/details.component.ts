@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { HousingService } from '../../services/housing.service';
 import { HousingLocation } from '../../types/housinglocation';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { HousingApplicationForm } from './housing-application-form.type';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ListingApplyComponent } from '../listing-apply/listing-apply.component';
 
 @Component({
   selector: 'app-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ListingApplyComponent],
   template: `
     <article>
       <img
@@ -33,20 +33,7 @@ import { HousingApplicationForm } from './housing-application-form.type';
           </li>
         </ul>
       </section>
-      <section class="listing-apply">
-        <h2 class="section-heading">Apply now to live here</h2>
-        <form [formGroup]="applyForm" (submit)="submitApplication()">
-          <label for="first-name">First Name</label>
-          <input id="first-name" type="text" formControlName="firstName" />
-
-          <label for="last-name">Last Name</label>
-          <input id="last-name" type="text" formControlName="lastName" />
-
-          <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" />
-          <button type="submit" class="primary">Apply now</button>
-        </form>
-      </section>
+      <section class="listing-apply"><app-listing-apply /></section>
     </article>
   `,
   styleUrls: ['./details.component.scss'],
@@ -56,7 +43,6 @@ export class DetailsComponent {
   private readonly housingService = inject(HousingService);
 
   housingLocation: HousingLocation | undefined;
-  applyForm = this.createFormGroup();
 
   constructor() {
     this.getHousingLocation().then(housingLocation => {
@@ -64,24 +50,8 @@ export class DetailsComponent {
     });
   }
 
-  submitApplication() {
-    this.housingService.submitApplication(
-      this.applyForm.value.firstName ?? '',
-      this.applyForm.value.lastName ?? '',
-      this.applyForm.value.email ?? ''
-    );
-  }
-
   private getHousingLocation(): Promise<HousingLocation | undefined> {
     const housingLocationId = parseInt(this.route.snapshot.params['id'], 10);
     return this.housingService.getHousingLocationById(housingLocationId);
-  }
-
-  private createFormGroup(): FormGroup<HousingApplicationForm> {
-    return new FormGroup({
-      firstName: new FormControl(''),
-      lastName: new FormControl(''),
-      email: new FormControl(''),
-    });
   }
 }
