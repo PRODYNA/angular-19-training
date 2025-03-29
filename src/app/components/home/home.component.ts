@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HousingLocationComponent } from '../housing-location/housing-location.component';
 import { HousingService } from '../../services/housing.service';
 import { HousingLocation } from '../../types/housinglocation';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -11,14 +12,12 @@ import { HousingLocation } from '../../types/housinglocation';
   template: `
     <section>
       <form>
-        <input type="text" placeholder="Filter by city" #filter />
-        <button
-          class="primary"
-          type="button"
-          (click)="filterResults(filter.value)"
-        >
-          Search
-        </button>
+        <input
+          type="text"
+          placeholder="Filter by city"
+          #filter
+          (input)="onInputChange($event)"
+        />
       </form>
     </section>
     <section class="results">
@@ -33,26 +32,18 @@ import { HousingLocation } from '../../types/housinglocation';
 export class HomeComponent {
   housingLocationList: HousingLocation[] = [];
   housingService: HousingService = inject(HousingService);
-  filteredLocationList: HousingLocation[] = [];
+
+  private searchTermSubject: BehaviorSubject<string> =
+    new BehaviorSubject<string>('');
 
   constructor() {
-    this.housingService
-      .getAllHousingLocations()
-      .subscribe((housingLocationList: HousingLocation[]) => {
-        this.housingLocationList = housingLocationList;
-        this.filteredLocationList = housingLocationList;
-      });
+    // TODO hands-on-4: use the searchTermSubject stream and new this.housingService.getHousingLocationsFiltered(searchTerm) method
+    // to get the housing locations filtered by the search term
+    // and assign the result to housingLocationList in a subscribe
   }
 
-  filterResults(text: string) {
-    if (!text) {
-      this.filteredLocationList = this.housingLocationList;
-      return;
-    }
-
-    this.filteredLocationList = this.housingLocationList.filter(
-      housingLocation =>
-        housingLocation?.city.toLowerCase().includes(text.toLowerCase())
-    );
+  onInputChange(inputChange: Event) {
+    const searchTerm = (inputChange.target as HTMLInputElement).value;
+    // TODO hands-on-4: pump the value into the BehaviorSubject
   }
 }

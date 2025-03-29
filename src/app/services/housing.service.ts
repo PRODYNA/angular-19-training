@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HousingLocation } from '../types/housinglocation';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map, Observable, of, switchMap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +22,30 @@ export class HousingService {
       .pipe(map(response => response ?? {}));
   }
 
+  getHousingLocationsFiltered(
+    searchTerm: string
+  ): Observable<HousingLocation[]> {
+    return this.getAllHousingLocations().pipe(
+      map(housingLocations => this.filterResults(searchTerm, housingLocations))
+    );
+  }
+
+  // Same as getHousingLocationsFiltered but returns an error observable every third time
+  getHousingLocationsFilteredWithErrors(
+    searchTerm: string
+  ): Observable<HousingLocation[]> {
+    return this.getHousingLocationsFiltered(searchTerm).pipe(
+      switchMap(housingLocations => {
+        if (housingLocations.length % 3 === 0) {
+          return throwError(() => new Error('Error occurred'));
+        }
+        return of(housingLocations);
+      })
+    );
+  }
+
+
+
   updateHousingLocationFavStatus(
     id: number,
     isFavourte: boolean
@@ -34,6 +58,19 @@ export class HousingService {
   submitApplication(firstName: string, lastName: string, email: string) {
     console.log(
       `Homes application received: firstName: ${firstName}, lastName: ${lastName}, email: ${email}.`
+    );
+  }
+
+  private filterResults(
+    searchTerm: string,
+    housingLocations: HousingLocation[]
+  ): HousingLocation[] {
+    if (!searchTerm) {
+      return housingLocations;
+    }
+
+    return housingLocations.filter(housingLocation =>
+      housingLocation?.city.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
 }
