@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HousingLocationComponent } from '../housing-location/housing-location.component';
 import { HousingService } from '../../services/housing.service';
 import { HousingLocation } from '../../types/housinglocation';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, catchError, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -37,13 +37,43 @@ export class HomeComponent {
     new BehaviorSubject<string>('');
 
   constructor() {
-    // TODO hands-on-4: use the searchTermSubject stream and new this.housingService.getHousingLocationsFiltered(searchTerm) method
-    // to get the housing locations filtered by the search term
-    // and assign the result to housingLocationList in a subscribe
+   this.searchTermSubject
+      .pipe(
+        switchMap(searchTerm =>
+          this.housingService
+            .getHousingLocationsFilteredWithErrors(searchTerm)
+            .pipe(
+              catchError(err => {
+                console.error('Error fetching locations:', err);
+                return of([]);
+              })
+            )
+        ),
+        tap({
+          subscribe: () => {
+            console.log('search subscribed');
+          },
+          next: locations => {
+            console.log('search locations', locations);
+          },
+          error: err => {
+            console.error('search error', err);
+          },
+          complete: () => {
+            console.log('search completed');
+          },
+          unsubscribe: () => {
+            console.log('search unsubscribed');
+          },
+        })
+      )
+      .subscribe((filteredLocations: HousingLocation[]) => {
+        this.housingLocationList = filteredLocations;
+      });
   }
 
   onInputChange(inputChange: Event) {
     const searchTerm = (inputChange.target as HTMLInputElement).value;
-    // TODO hands-on-4: pump the value into the BehaviorSubject
+    this.searchTermSubject.next(searchTerm);
   }
 }
