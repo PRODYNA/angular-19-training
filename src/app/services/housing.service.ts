@@ -22,10 +22,14 @@ export class HousingService {
       .pipe(map(response => response ?? {}));
   }
 
-  // TODO Hands-on-3: create a new method update the favourite status of a housing location
-  // the REST API of db.json-server is like: PATCH <url>/:id
-  // and the patch-body as usual is a part of interface HousingLocation you want to patch
-  // the methods should return an observable of type HousingLocation
+  updateHousingLocationFavStatus(
+    id: number,
+    isFavourte: boolean
+  ): Observable<HousingLocation> {
+    return this.httpClient
+      .patch<HousingLocation>(`${this.url}/${id}`, { favourite: isFavourte })
+      .pipe(map(response => response ?? {}));
+  }
 
   submitApplication(firstName: string, lastName: string, email: string) {
     console.log(

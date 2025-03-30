@@ -36,7 +36,10 @@ export class AddToFavouritesComponent {
   @Input() isFavourite: boolean = false;
 
   update() {
-    // TODO Hands-on-3: call new method in housing service,
-    // subscribe to the observable and update the isFavourite property in the subscribe
+    this.housingService
+      .updateHousingLocationFavStatus(this.housingId, !this.isFavourite)
+      .subscribe(updatedHousing => {
+        this.isFavourite = updatedHousing.favourite;
+      });
   }
 }
