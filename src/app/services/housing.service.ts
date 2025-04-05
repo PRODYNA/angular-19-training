@@ -16,12 +16,16 @@ export class HousingService {
       .pipe(map(response => response ?? []));
   }
 
-  async getHousingLocationById(
-    id: number
-  ): Promise<HousingLocation | undefined> {
-    const data = await fetch(`${this.url}/${id}`);
-    return (await data.json()) ?? {};
+  getHousingLocationById(id: number): Observable<HousingLocation | undefined> {
+    return this.httpClient
+      .get<HousingLocation>(`${this.url}/${id}`)
+      .pipe(map(response => response ?? {}));
   }
+
+  // TODO Hands-on-3: create a new method update the favourite status of a housing location
+  // the REST API of db.json-server is like: PATCH <url>/:id
+  // and the patch-body as usual is a part of interface HousingLocation you want to patch
+  // the methods should return an observable of type HousingLocation
 
   submitApplication(firstName: string, lastName: string, email: string) {
     console.log(

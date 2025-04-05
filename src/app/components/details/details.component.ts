@@ -5,6 +5,7 @@ import { HousingService } from '../../services/housing.service';
 import { HousingLocation } from '../../types/housinglocation';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ListingApplyComponent } from '../listing-apply/listing-apply.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-details',
@@ -45,12 +46,12 @@ export class DetailsComponent {
   housingLocation: HousingLocation | undefined;
 
   constructor() {
-    this.getHousingLocation().then(housingLocation => {
+    this.getHousingLocation().subscribe(housingLocation => {
       this.housingLocation = housingLocation;
     });
   }
 
-  private getHousingLocation(): Promise<HousingLocation | undefined> {
+  private getHousingLocation(): Observable<HousingLocation | undefined> {
     const housingLocationId = parseInt(this.route.snapshot.params['id'], 10);
     return this.housingService.getHousingLocationById(housingLocationId);
   }
