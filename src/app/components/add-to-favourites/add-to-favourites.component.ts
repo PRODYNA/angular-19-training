@@ -1,4 +1,9 @@
-import { Component, inject, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+} from '@angular/core';
 import { HousingService } from '../../services/housing.service';
 
 @Component({
@@ -28,6 +33,7 @@ import { HousingService } from '../../services/housing.service';
     </button>
   `,
   styleUrl: './add-to-favourites.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddToFavouritesComponent {
   private readonly housingService = inject(HousingService);
@@ -39,6 +45,12 @@ export class AddToFavouritesComponent {
     this.housingService
       .updateHousingLocationFavStatus(this.housingId, !this.isFavourite)
       .subscribe(updatedHousing => {
+        console.log(
+          'Successfully updated favourite status of ',
+          this.housingId,
+          'to',
+          updatedHousing.favourite
+        );
         this.isFavourite = updatedHousing.favourite;
       });
   }
